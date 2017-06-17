@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "22047644322",
+    "firebase_url": "https://lotra-bfdb2.firebaseio.com",
+    "project_id": "lotra-bfdb2",
+    "storage_bucket": "lotra-bfdb2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:22047644322:android:c947841ab2f00608",
+        "android_client_info": {
+          "package_name": "com.salma.lotra"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "22047644322-tpom0qqdldtcv59dq9v6r51dcqo0kk5i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.salma.lotra",
+            "certificate_hash": "c8d8a746ddf526ae1350720d952a9868da226c38"
+          }
+        },
+        {
+          "client_id": "22047644322-3ikcrhm6cd15pbn5mejm8n5n2p04dous.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDe7ySLEuTRWS4m__OHQvBnoxnC92Qdbu0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "22047644322-3ikcrhm6cd15pbn5mejm8n5n2p04dous.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
