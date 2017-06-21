@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -41,7 +42,7 @@ public class LocationActivity extends AppCompatActivity implements
 
     private static final int REQUEST_LOCATION = 121;
     private FirebaseAuth mFirebaseAuth;
-    private ImageView mLocationTxtView;
+    private ImageView mLocationImgView;
     private GoogleApiClient mGoogleApiClient;
     private double mLatitude;
     private double mLongitude;
@@ -50,7 +51,11 @@ public class LocationActivity extends AppCompatActivity implements
     private String mBusNumber;
     private LocationManager locationManager;
     private String provider;
-    DriverModel mDriverModel;
+    private DriverModel mDriverModel;
+    private TextView mCounterTxtView;
+    private Button mIncrementalBtn;
+    private Button mDecrementalBtn;
+    private int mNumberOfPassengers;
 
 
     @Override
@@ -58,24 +63,57 @@ public class LocationActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        mDriverModel = new DriverModel();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .build();
 
-
+        mNumberOfPassengers = retrieveNumberOfPassenger();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         provider = locationManager.getBestProvider(new Criteria(), true);
-        mLocationTxtView = (ImageView) findViewById(R.id.location_img_view);
-        mDriverModel = new DriverModel();
+        mLocationImgView = (ImageView) findViewById(R.id.location_img_view);
+        mCounterTxtView = (TextView) findViewById(R.id.number_of_passenger_txt_view);
+        mIncrementalBtn = (Button) findViewById(R.id.increment_btn);
+        mDecrementalBtn = (Button) findViewById(R.id.decrement_btn);
+        mCounterTxtView.setText(""+mNumberOfPassengers);
+        mIncrementalBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mNumberOfPassengers++;
+                if (mNumberOfPassengers > 30) {
+                    mNumberOfPassengers = 30;
+                }
+
+                mCounterTxtView.setText("" + mNumberOfPassengers);
+                updateInfo();
+                saveNumberOfPassenger(mNumberOfPassengers);
+            }
+        });
+        mDecrementalBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mNumberOfPassengers--;
+                if (mNumberOfPassengers < 1) {
+                    mNumberOfPassengers = 1;
+                }
+
+                mCounterTxtView.setText("" + mNumberOfPassengers);
+                updateInfo();
+                saveNumberOfPassenger(mNumberOfPassengers);
+
+            }
+        });
 
 
-        mLocationTxtView.setOnClickListener(new View.OnClickListener() {
+        mLocationImgView.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
                 updateInfo();
+                Toast.makeText(LocationActivity.this, "Your Location has been updated !", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -118,6 +156,7 @@ public class LocationActivity extends AppCompatActivity implements
         mDriverModel.Latitude = mLatitude;
         mDriverModel.Longitude = mLongitude;
         mDriverModel.BusNumber = getBusNumber();
+        mDriverModel.NumberOfPassenger = mNumberOfPassengers;
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("DriverInfo").child(mDriverModel.DriverName).setValue(mDriverModel);
     }
@@ -134,6 +173,20 @@ public class LocationActivity extends AppCompatActivity implements
         String name = preferences.getString("BusNumber", "");
         return name;
     }
+
+    public void saveNumberOfPassenger(int busNumber) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("NumberOfPassenger", busNumber);
+        editor.apply();
+    }
+
+    public int retrieveNumberOfPassenger() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int number = preferences.getInt("NumberOfPassenger", 0);
+        return number;
+    }
+
 
     public void deleteSharedPref() {
         PreferenceManager.getDefaultSharedPreferences(this).edit().clear().commit();
@@ -273,7 +326,7 @@ public class LocationActivity extends AppCompatActivity implements
                     if (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
-                      //  locationManager.requestLocationUpdates(provider, 100, 1, this);
+                        locationManager.getLastKnownLocation(provider);
                     }
 
 
@@ -289,7 +342,7 @@ public class LocationActivity extends AppCompatActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        Toast.makeText(this, "onLocationChanged" + location.getLatitude(), Toast.LENGTH_SHORT).show();
+        //    Toast.makeText(this, "onLocationChanged" + location.getLatitude(), Toast.LENGTH_SHORT).show();
 
         mLatitude = location.getLatitude();
         mLongitude = location.getLongitude();

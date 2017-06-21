@@ -6,9 +6,10 @@ package com.salma.lotra;
 
 public class DriverModel {
 
-    String BusNumber;
-    String DriverName;
-    String Email;
-    Double Latitude;
-    Double Longitude;
+    public String BusNumber;
+    public String DriverName;
+    public String Email;
+    public Double Latitude;
+    public Double Longitude;
+    public int NumberOfPassenger;
 }
